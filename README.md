@@ -3,7 +3,7 @@ The modelling of insect navigation toolkit including:
 * sperated visual navigation-visual homing (VH) and route following (RF)  
 * path integration (adapted from Stone et.al 2017)  
 * optimal cue integration and the multi-guidance system coordination  
-![](img/extended_toolkit.png 'extended insect navigation toolkit')  
+![](img/extended_navigation_toolkit.png 'extended insect navigation toolkit')  
 * Modelling the specific brain regions.
 ![](img/brain_map.png 'Model mapped to brain regions')  
 
