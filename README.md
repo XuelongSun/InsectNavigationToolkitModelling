@@ -1,4 +1,4 @@
-![](image/extended_toolkit.png 'extended insect navigation toolkit')  
+![](img/extended_toolkit.png 'extended insect navigation toolkit')  
 
 # Desciption
 The modelling of insect navigation toolkit including:  
@@ -23,9 +23,9 @@ The modelling of insect navigation toolkit including:
   * _insect_navigation.py_ : the class for unified model of the navigation toolkit  
   * (X)___InsectNavigationGUI.exe___ : the GUI developed for running the simulations (Cannot upload, exceed 25M). Snapshot of the GUI:  
   
-  ![](image/InsectNavigationGUI_ScreenShot.png 'GUI screenshot')
+  ![](img/InsectNavigationGUI_ScreenShot.png 'GUI screenshot')
 
-* __image__: images used for README.md  
+* __img__: images used for README.md  
 
 # Running the simulation:
 
