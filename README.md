@@ -1,3 +1,8 @@
+# Related Publication
+[Sun, Xuelong, Yue, Shigang and Mangan, Michael (2020) A decentralised neural model explaining optimal integration of navigational strategies in insects. eLife, 9 . ISSN 2050-084X](https://elifesciences.org/articles/54026)
+
+Any question, be free to contact me: xsun@lincoln.ac.uk, xuelongsun@hotmail.com
+
 # Desciption
 The modelling of insect navigation toolkit including:  
 * sperated visual navigation-visual homing (VH) and route following (RF)  
@@ -324,7 +329,7 @@ en = agent.train_mb_network()
 pi_len_s = [0.1, 1.0, 3.0, 7.0] # m
 pi_dir = 90 # deg
 
-start_pos = []
+start_pos = [137.35, -50.]
 start_h_s = np.linspace(0, 2 * np.pi, 2, endpoint=False)
 time_out = 2
 motor_k = 0.125
@@ -391,7 +396,7 @@ pi = agent.generate_pi_memory(pi_len, pi_dir, pi_initial_memory)
 pi_len_s = [0.1, 1.0, 3.0, 7.0] # m
 pi_dir = 90 # deg
 
-start_pos_s = []
+start_pos_s = [[137.35, -50.], [412.05, -150.], [686.75, -250.]]
 start_h_s = np.linspace(0, 2 * np.pi, 2, endpoint=False)
 time_out = 2
 motor_k = 0.125
@@ -428,18 +433,50 @@ This section contains some code to generate some analysis data, such as the ZM e
 
 ```python
 %%time
-from model import *
+from insect_navigation import InsectNavigationAgent
+from image_processing import visual_sense
 # check the data for RF
 # 1.RF memory , 2.the phase-tracking, 3.RF suggested
 
+# set PI parameters
+pi_initial_memory = 0.1
+pi_len = 3.0 # m
+pi_dir = 90 # deg
+
+# set VH parameters
+num_pn = 81
+num_kc = 4000
+vh_learning_rate = 0.1
+vh_kc_thr = 0.04
+
+# set RF parameters
+rf_learning_rate = 0.1
+rf_learning_step = 30000
+ann_num_neurons = 30
+
+# set SMP neuron parameters
+tun_k = 0.0125
+sn_thr = 5.0
+
+# create the insect navigation agent
+InsectNaviAgent = InsectNavigationAgent(world, route_memory, home_memory, zm_n_max, 
+                                        vh_learning_rate, vh_kc_thr, num_pn, num_kc, 
+                                        tun_k, sn_thr,
+                                        ann_num_neurons,
+                                        pi_initial_memory)
+# training the MB network
+en = agent.train_mb_network()
+# training the ANN network
+err = agent.train_ann_network(rf_learning_step, rf_learning_rate)
+
 # sampled num
-sample_num = 20
+sample_num = 2
 
 # sampled locations
 pos_x = np.linspace(-10,2,sample_num)
 pos_y = np.linspace(-8,2,sample_num)
 # sampled heading
-h = np.linspace(-np.pi,np.pi,10)
+h = np.linspace(-np.pi,np.pi,2)
 
 # stored data
 ann_output = np.zeros([sample_num**2,len(h)])
@@ -449,11 +486,11 @@ vc_phase_prefs = np.linspace(-np.pi,np.pi,8,endpoint=False)
 
 for i in range(sample_num**2):
     for k,h_i in enumerate(h):
-        A,P = visual_sense(InsectNaviAgent.world_data, pos_x[i%sample_num],pos_y[i//sample_num],h_i,nmax=InsectNaviAgent.nmax)
+        A,P = visual_sense(InsectNaviAgent.world, pos_x[i%sample_num],pos_y[i//sample_num],h_i,nmax=InsectNaviAgent.zm_n_max)
         current_zm_p[i,k] = P[16]
         nn_input = A.copy()
         nn_input = (nn_input - np.min(nn_input))/np.max(nn_input)
-        nn_res = InsectNaviAgent.VC.run_test(nn_input)
+        nn_res = InsectNaviAgent.ann.nn_output(nn_input)
         ann_output[i,k] = np.arctan2(np.sum(nn_res*np.sin(vc_phase_prefs)), 
                                      np.sum(nn_res*np.cos(vc_phase_prefs)))          
         
