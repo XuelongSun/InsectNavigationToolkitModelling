@@ -506,7 +506,9 @@ for i in range(sample_num**2):
 # generate visual memory along PI route
 from image_processing import get_img_view
 from zernike_moment import zernike_moment
-
+# the simulated 3D world
+world = sio.loadmat('data/world.mat')
+n_max = 16
 home_pos_new = np.array([0, 0])
 sample_len = 20
 pos = np.array([[home_pos_new[0] - sample_len, home_pos_new[1]],
@@ -525,11 +527,11 @@ memory_ZM_As = np.zeros([len(pos), 81])
 memory_ZM_Ps = np.zeros([len(pos), 81])
 memory_imgs =  np.zeros([len(pos), 208, 208])
 for i in range(len(pos)):
-    memory_imgs[i, :, :] = get_img_view(InsectNaviAgent.world_data, pos[i, 0] / 100.0, pos[i, 1] / 100.0, 0.01,
+    memory_imgs[i, :, :] = get_img_view(world, pos[i, 0] / 100.0, pos[i, 1] / 100.0, 0.01,
                                         h[i], hfov_d=360, wrap=True,
                                         blur=False, blur_kernel_size=3)
     index = 0
-    for n in range(InsectNaviAgent.nmax + 1):
+    for n in range(n_max + 1):
         for m in range(n + 1):
             if (n - m) % 2 == 0:
                 M, memory_ZM_As[i, index], memory_ZM_Ps[i, index] = zernike_moment(255 - memory_imgs[i, :, :], n, m)
@@ -542,6 +544,8 @@ for i in range(len(pos)):
 ```python
 %%time
 from image_processing import visual_sense
+world = sio.loadmat('data/world.mat')
+n_max = 16
 # generate the ZM coefficients for the world
 sample_num = 20
 map_x = np.linspace(-10,10,sample_num)
@@ -551,7 +555,7 @@ world_zm_a = np.zeros([len(map_x),len(map_y),81])
 world_zm_p = np.zeros([len(map_x),len(map_y),81])
 for i,y in enumerate(map_y):
     for j,x in enumerate(map_x):
-        A,P = visual_sense(InsectNaviAgent.world_data,x,y,h[i,j],nmax=16)
+        A,P = visual_sense(world,x,y,h[i,j],nmax=n_max)
         world_zm_a[j,i] = A
         world_zm_p[j,i] = P
 ```
