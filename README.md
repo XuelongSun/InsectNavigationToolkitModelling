@@ -31,6 +31,8 @@ The modelling of insect navigation toolkit including:
   
   ![](img/InsectNavigationGUI_ScreenShot.png 'GUI screenshot')
 
+* __demo__: sample code for running the model and plot the figures in paper.
+
 * __img__: images used for README.md  
 
 # Running the simulation:
